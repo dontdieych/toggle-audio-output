@@ -1,0 +1,16 @@
+import { lines, trim } from "std"
+main {
+    let sinks = lines($pactl list sinks short | cut -f 2$?)
+    let current = trim($pactl info|grep "^Default Sink:" | cut -d : -f 2$?)
+
+    loop s in sinks {
+        echo s
+        echo ""
+    }
+    echo current
+
+    if {
+        current == sinks[0]: $pactl set-default-sink {sinks[1]}$?
+        else: $pactl set-default-sink {sinks[0]}$?
+    }
+}
